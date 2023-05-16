@@ -107,6 +107,40 @@ int main(/*int argc, char *argv[]*/)
         branch.setOrigin(220, 20);
     }
 
+    sf::Texture texturePlayer;
+    texturePlayer.loadFromFile("graphics/player.png");
+    sf::Sprite spritePlayer;
+    spritePlayer.setTexture(texturePlayer);
+    spritePlayer.setPosition(580, 720);
+    side playerSide = side::LEFT;
+
+    sf::Texture textureRIP;
+    textureRIP.loadFromFile("graphics/rip.png");
+    sf::Sprite spriteRIP;
+    spriteRIP.setTexture(textureRIP);
+    spriteRIP.setPosition(600, 860);
+
+    sf::Texture textureAxe;
+    textureAxe.loadFromFile("graphics/axe.png");
+    sf::Sprite spriteAxe;
+    spriteAxe.setTexture(textureAxe);
+    spriteAxe.setPosition(700, 830);
+
+    const float AXE_POSITION_LEFT = 700;
+    const float AXE_POSITION_RIGHT = 1075;
+
+    sf::Texture textureLog;
+    textureLog.loadFromFile("graphics/log.png");
+    sf::Sprite spriteLog;
+    spriteLog.setTexture(textureLog);
+    spriteLog.setPosition(810, 720);
+
+    bool logActive = false;
+    float logSpeedX = 1000;
+    float logSpeedY = -1500;
+
+    bool acceptInput = false;
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -116,6 +150,12 @@ int main(/*int argc, char *argv[]*/)
             {
                 window.close();
             }
+            else if (event.type == sf::Event::KeyReleased && !paused)
+            {
+                acceptInput = true;
+
+                spriteAxe.setPosition(2000, spriteAxe.getPosition().y);
+            }
             else if (event.type == sf::Event::KeyPressed)
             {
                 if (event.key.code == sf::Keyboard::Return)
@@ -123,6 +163,55 @@ int main(/*int argc, char *argv[]*/)
                     paused = !paused;
                     score = 0;
                     timeRemaining = 6.0f;
+
+                    for (int i = 1; i < NUM_BRANCHES; i++)
+                        branchPositions[i] = side::NONE;
+
+                    spriteRIP.setPosition(675, 2000);
+                    spritePlayer.setPosition(580, 720);
+                    acceptInput = true;
+                }
+                if (event.key.code == sf::Keyboard::Right)
+                {
+                    if (acceptInput)
+                    {
+                        playerSide = side::RIGHT;
+
+                        score++;
+
+                        timeRemaining += (2/score) + 0.15;
+                        spriteAxe.setPosition(AXE_POSITION_RIGHT,
+                                            spriteAxe.getPosition().y);
+                        spritePlayer.setPosition(1200, 720);
+
+                        updateBranches(score);
+
+                        spriteLog.setPosition(810, 720);
+                        logSpeedX = -5000;
+                        logActive = true;
+                        acceptInput = false;
+                    }
+                }
+                if (event.key.code == sf::Keyboard::Left)
+                {
+                    if (acceptInput)
+                    {
+                        playerSide = side::LEFT;
+
+                        score++;
+
+                        timeRemaining += (2/score) + 0.15;
+                        spriteAxe.setPosition(AXE_POSITION_LEFT,
+                                            spriteAxe.getPosition().y);
+                        spritePlayer.setPosition(580, 720);
+
+                        updateBranches(score);
+
+                        spriteLog.setPosition(810, 720);
+                        logSpeedX = 5000;
+                        logActive = true;
+                        acceptInput = false;
+                    }
                 }
             }
         }
@@ -227,6 +316,12 @@ int main(/*int argc, char *argv[]*/)
             window.draw(branch);
 
         window.draw(spriteTree);
+
+        window.draw(spritePlayer);
+        window.draw(spriteAxe);
+        window.draw(spriteLog);
+        window.draw(spriteRIP);
+
         window.draw(spriteBee);
 
         window.draw(timeBar);
