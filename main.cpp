@@ -2,6 +2,7 @@
 #include <sstream>
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 void updateBranches(const int& seed);
 const int NUM_BRANCHES = 6;
@@ -141,6 +142,21 @@ int main(/*int argc, char *argv[]*/)
 
     bool acceptInput = false;
 
+    sf::SoundBuffer chopBuffer;
+    chopBuffer.loadFromFile("sound/chop.wav");
+    sf::Sound chop;
+    chop.setBuffer(chopBuffer);
+
+    sf::SoundBuffer deathBuffer;
+    deathBuffer.loadFromFile("sound/death.wav");
+    sf::Sound death;
+    death.setBuffer(deathBuffer);
+
+    sf::SoundBuffer outOfTimeBuffer;
+    outOfTimeBuffer.loadFromFile("sound/out_of_time.wav");
+    sf::Sound outOfTime;
+    outOfTime.setBuffer(outOfTimeBuffer);
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -190,6 +206,7 @@ int main(/*int argc, char *argv[]*/)
                         logSpeedX = -5000;
                         logActive = true;
                         acceptInput = false;
+                        chop.play();
                     }
                 }
                 if (event.key.code == sf::Keyboard::Left)
@@ -211,6 +228,7 @@ int main(/*int argc, char *argv[]*/)
                         logSpeedX = 5000;
                         logActive = true;
                         acceptInput = false;
+                        chop.play();
                     }
                 }
             }
@@ -233,6 +251,8 @@ int main(/*int argc, char *argv[]*/)
                 messageText.setOrigin(textRect.left + textRect.width / 2.0f,
                                       textRect.top + textRect.height / 2.0f);
                 messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+
+                outOfTime.play();
             }
 
             if (!beeActive)
@@ -329,6 +349,8 @@ int main(/*int argc, char *argv[]*/)
                 messageText.setOrigin(textRect.left + textRect.width / 2.0f,
                                       textRect.top + textRect.height / 2.0f);
                 messageText.setPosition(1920/2.0f, 1080/2.0f);
+
+                death.play();
             }
         }
 
