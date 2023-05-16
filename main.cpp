@@ -317,6 +317,19 @@ int main(/*int argc, char *argv[]*/)
                     spriteLog.setPosition(810, 720);
                 }
             }
+
+            if (branchPositions[5] == playerSide)
+            {
+                paused = true;
+                acceptInput = false;
+                spriteRIP.setPosition(525, 760);
+                spritePlayer.setPosition(2000, 660);
+                messageText.setString("OUCH!!");
+                sf::FloatRect textRect = messageText.getLocalBounds();
+                messageText.setOrigin(textRect.left + textRect.width / 2.0f,
+                                      textRect.top + textRect.height / 2.0f);
+                messageText.setPosition(1920/2.0f, 1080/2.0f);
+            }
         }
 
         window.clear();
