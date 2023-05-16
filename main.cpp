@@ -1,4 +1,6 @@
 #include <iostream>
+#include <sstream>
+
 #include <SFML/Graphics.hpp>
 
 int main(/*int argc, char *argv[]*/)
@@ -48,7 +50,32 @@ int main(/*int argc, char *argv[]*/)
 
     sf::Clock clock;
 
+    int score = 0;
+
     bool paused = true;
+
+    sf::Font font;
+    font.loadFromFile("fonts/KOMIKAP_.ttf");
+
+    sf::Text messageText;
+    sf::Text scoreText;
+
+    messageText.setFont(font);
+    scoreText.setFont(font);
+
+    messageText.setString("Pres Enter to Start!");
+    messageText.setCharacterSize(75);
+    messageText.setFillColor(sf::Color::White);
+
+    scoreText.setString("Score = 0");
+    scoreText.setCharacterSize(100);
+    scoreText.setFillColor(sf::Color::White);
+
+    sf::FloatRect textRect = messageText.getLocalBounds();
+    messageText.setOrigin(textRect.left + textRect.width / 2.0f,
+                          textRect.top + textRect.height / 2.0f);
+    messageText.setPosition(1920 / 2.0f, 1080/2.0f);
+    scoreText.setPosition(20, 20);
 
     while (window.isOpen())
     {
@@ -142,6 +169,10 @@ int main(/*int argc, char *argv[]*/)
                 if (spriteCloud3.getPosition().x > 1920)
                     cloud3Active = false;
             }
+
+            std::stringstream ss;
+            ss << "Score = " << score;
+            scoreText.setString(ss.str());
         }
 
         window.clear();
@@ -153,6 +184,12 @@ int main(/*int argc, char *argv[]*/)
 
         window.draw(spriteTree);
         window.draw(spriteBee);
+
+        window.draw(scoreText);
+        if (paused)
+        {
+            window.draw(messageText);
+        }
 
         window.display();
     }
