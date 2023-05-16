@@ -31,22 +31,26 @@ int main(/*int argc, char *argv[]*/)
 
     sf::Texture textureCloud;
     textureCloud.loadFromFile("graphics/cloud.png");
-    sf::Sprite spriteCloud1;
-    sf::Sprite spriteCloud2;
-    sf::Sprite spriteCloud3;
-    spriteCloud1.setTexture(textureCloud);
-    spriteCloud2.setTexture(textureCloud);
-    spriteCloud3.setTexture(textureCloud);
-    spriteCloud1.setPosition(-400, 0);
-    spriteCloud2.setPosition(-400, 250);
-    spriteCloud3.setPosition(-400, 500);
 
-    bool cloud1Active = false;
-    bool cloud2Active = false;
-    bool cloud3Active = false;
-    float cloud1Speed = 0.0f;
-    float cloud2Speed = 0.0f;
-    float cloud3Speed = 0.0f;
+    struct SpriteCloud
+    {
+        sf::Sprite sprite;
+        bool active;
+        float speed;
+    };
+
+    SpriteCloud spriteClouds[3];
+
+    int yOffset = 0;
+    for (SpriteCloud& sc : spriteClouds)
+    {
+        sc.sprite.setTexture(textureCloud);
+        sc.sprite.setPosition(-400, yOffset);
+        sc.active = false;
+        sc.speed = 0.0f;
+
+        yOffset += 250;
+    }
 
     sf::Clock clock;
 
@@ -145,61 +149,32 @@ int main(/*int argc, char *argv[]*/)
                     beeActive = false;
             }
 
-            if (!cloud1Active)
+            int speedOffset = 10;
+            int heightOffset = 150;
+            for (SpriteCloud& sc : spriteClouds)
             {
-                srand((int) time(0) * 10);
-                cloud1Speed = (rand() % 200);
-                srand((int) time(0) * 10);
-                float height = (rand() % 150);
-                spriteCloud1.setPosition(-400, height);
-                cloud1Active = true;
-            }
-            else
-            {
-                spriteCloud1.setPosition(
-                    spriteCloud1.getPosition().x + (cloud1Speed * dt.asSeconds()),
-                    spriteCloud1.getPosition().y
-                );
-                if (spriteCloud1.getPosition().x > 1920)
-                    cloud1Active = false;
-            }
+                if (!sc.active)
+                {
+                    srand((int) time(0) * speedOffset);
+                    sc.speed = (rand() % 200);
+                    srand((int) time(0) * speedOffset);
+                    float height = (rand() % heightOffset) + 150;
+                    sc.sprite.setPosition(-400, height);
+                    sc.active = true;
 
-            if (!cloud2Active)
-            {
-                srand((int) time(0) * 20);
-                cloud2Speed = (rand() % 200);
-                srand((int) time(0) * 20);
-                float height = (rand() % 300) - 150;
-                spriteCloud2.setPosition(-400, height);
-                cloud2Active = true;
-            }
-            else
-            {
-                spriteCloud2.setPosition(
-                    spriteCloud2.getPosition().x + (cloud2Speed * dt.asSeconds()),
-                    spriteCloud2.getPosition().y
-                );
-                if (spriteCloud2.getPosition().x > 1920)
-                    cloud2Active = false;
-            }
+                    speedOffset += 10;
+                    heightOffset += 150;
+                }
+                else
+                {
+                    sc.sprite.setPosition(
+                        sc.sprite.getPosition().x + (sc.speed * dt.asSeconds()),
+                        sc.sprite.getPosition().y
+                    );
+                    if (sc.sprite.getPosition().x > 1920)
+                        sc.active = false;
+                }
 
-            if (!cloud3Active)
-            {
-                srand((int) time(0) * 30);
-                cloud3Speed = (rand() % 200);
-                srand((int) time(0) * 20);
-                float height = (rand() % 450) - 150;
-                spriteCloud3.setPosition(-400, height);
-                cloud3Active = true;
-            }
-            else
-            {
-                spriteCloud3.setPosition(
-                    spriteCloud3.getPosition().x + (cloud3Speed * dt.asSeconds()),
-                    spriteCloud3.getPosition().y
-                );
-                if (spriteCloud3.getPosition().x > 1920)
-                    cloud3Active = false;
             }
 
             std::stringstream ss;
@@ -210,9 +185,8 @@ int main(/*int argc, char *argv[]*/)
         window.clear();
 
         window.draw(spriteBackground);
-        window.draw(spriteCloud1);
-        window.draw(spriteCloud2);
-        window.draw(spriteCloud3);
+        for (SpriteCloud& sc : spriteClouds)
+            window.draw(sc.sprite);
 
         window.draw(spriteTree);
         window.draw(spriteBee);
