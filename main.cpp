@@ -50,6 +50,16 @@ int main(/*int argc, char *argv[]*/)
 
     sf::Clock clock;
 
+    sf::RectangleShape timeBar;
+    float timeBarStartWidth = 400;
+    float timeBarHeight = 80;
+    timeBar.setSize(sf::Vector2f(timeBarStartWidth, timeBarHeight));
+    timeBar.setFillColor(sf::Color::Red);
+    timeBar.setPosition((1920/2) - timeBarStartWidth / 2, 980);
+    sf::Time gameTimeTotal;
+    float timeRemaining = 6.0f;
+    float timeBarWidthPerSecond = timeBarStartWidth / timeRemaining;
+
     int score = 0;
 
     bool paused = true;
@@ -83,16 +93,38 @@ int main(/*int argc, char *argv[]*/)
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
+            {
                 window.close();
+            }
             else if (event.type == sf::Event::KeyPressed)
+            {
                 if (event.key.code == sf::Keyboard::Return)
+                {
                     paused = !paused;
+                    score = 0;
+                    timeRemaining = 6.0f;
+                }
+            }
         }
 
         sf::Time dt = clock.restart();
 
         if (!paused)
         {
+            timeRemaining -= dt.asSeconds();
+            timeBar.setSize(sf::Vector2f(timeBarWidthPerSecond * timeRemaining,
+                                         timeBarHeight));
+
+            if (timeRemaining <= 0.0f)
+            {
+                paused = true;
+                messageText.setString("Out of time!");
+
+                sf::FloatRect textRect = messageText.getLocalBounds();
+                messageText.setOrigin(textRect.left + textRect.width / 2.0f,
+                                      textRect.top + textRect.height / 2.0f);
+                messageText.setPosition(1920 / 2.0f, 1080 / 2.0f);
+            }
 
             if (!beeActive)
             {
@@ -184,6 +216,8 @@ int main(/*int argc, char *argv[]*/)
 
         window.draw(spriteTree);
         window.draw(spriteBee);
+
+        window.draw(timeBar);
 
         window.draw(scoreText);
         if (paused)
