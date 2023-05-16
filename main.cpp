@@ -3,9 +3,15 @@
 
 int main(/*int argc, char *argv[]*/)
 {
-    sf::RenderWindow window (sf::VideoMode(200,200), "SFML Works!");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
+    sf::RenderWindow window (sf::VideoMode(1920,1080), "SFML Works!");
+
+    sf::Texture textureBackground;
+    textureBackground.loadFromFile("graphics/background.png");
+
+    sf::Sprite spriteBackground;
+    spriteBackground.setTexture(textureBackground);
+
+    spriteBackground.setPosition(0,0);
 
     while (window.isOpen())
     {
@@ -14,11 +20,10 @@ int main(/*int argc, char *argv[]*/)
         {
             if (event.type == sf::Event::Closed)
                 window.close();
-
         }
 
         window.clear();
-        window.draw(shape);
+        window.draw(spriteBackground);
         window.display();
     }
 
