@@ -1,4 +1,5 @@
 #include "Player.h"
+#include <cmath>
 
 Player::Player()
 {
@@ -163,7 +164,7 @@ void Player::update(float elapsedTime, sf::Vector2i mousePosition)
         position.y = arena.top + tileSize;
     }
 
-    float angle = (sf::atan2(mousePosition.y - resolution.y / 2,
+    float angle = (std::atan2(mousePosition.y - resolution.y / 2,
                              mousePosition.x - resolution.x / 2)
                    * 180) / 3.141;
 

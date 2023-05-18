@@ -42,7 +42,7 @@ class Player
         sf::Texture texture;
         sf::Vector2f resolution;
         sf::IntRect arena;
-        int tilesize;
+        int tileSize;
 
         bool upPressed;
         bool downPressed;
